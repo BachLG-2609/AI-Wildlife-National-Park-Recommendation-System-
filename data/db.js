@@ -37,12 +37,17 @@ const saveUsers = (users) => {
   }
 };
 
-// các hàm thao tác với Database
+// Các hàm thao tác với Database
 const db = {
+  // Lấy toàn bộ danh sách users (Hỗ trợ cho Admin xem danh sách)
+  getAllUsers: () => {
+    return getAllUsers();
+  },
+
   // Tìm user theo Email
   findUserByEmail: (email) => {
     const users = getAllUsers();
-    return users.find((user) => user.email === email);
+    return users.find((user) => user.email === email.toLowerCase());
   },
 
   // Tìm user theo ID
@@ -51,14 +56,15 @@ const db = {
     return users.find((user) => user.id === id);
   },
 
-  // Tạo user mới
+  // Tạo user mới (Đã bổ sung trường role)
   createUser: (userData) => {
     const users = getAllUsers();
     const newUser = {
       id: Date.now().toString(),
       name: userData.name,
-      email: userData.email,
+      email: userData.email.toLowerCase(),
       password: userData.password, // Đã được mã hóa bcrypt từ controller
+      role: userData.role === 'admin' ? 'admin' : 'user', // 👈 BỔ SUNG: Mặc định là 'user', có thể truyền 'admin' nếu cần
       preferences: null,
       createdAt: new Date().toISOString()
     };
@@ -78,6 +84,33 @@ const db = {
       return users[userIndex];
     }
     return null;
+  },
+
+  // 👈 BỔ SUNG: Cập nhật thông tin tổng quát hoặc đổi role của user (dành cho Admin)
+  updateUser: (userId, updates) => {
+    const users = getAllUsers();
+    const userIndex = users.findIndex((u) => u.id === userId);
+    
+    if (userIndex !== -1) {
+      users[userIndex] = {
+        ...users[userIndex],
+        ...updates
+      };
+      saveUsers(users);
+      return users[userIndex];
+    }
+    return null;
+  },
+
+  // 👈 BỔ SUNG: Xóa user theo ID (dành cho Admin)
+  deleteUser: (userId) => {
+    const users = getAllUsers();
+    const filteredUsers = users.filter((u) => u.id !== userId);
+    if (filteredUsers.length === users.length) {
+      return false; // Không tìm thấy user để xóa
+    }
+    saveUsers(filteredUsers);
+    return true;
   }
 };
 

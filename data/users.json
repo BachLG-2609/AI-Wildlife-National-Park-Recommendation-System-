@@ -20,5 +20,13 @@
     "password": "$2a$10$oVzK74eU/5c20lY1Y.bFVO.GAx/.srlL5ty3A35eScrMoIk4Z6d9y",
     "preferences": null,
     "createdAt": "2026-07-31T12:27:26.742Z"
+  },
+  {
+    "id": "1785596105392",
+    "name": "Admin",
+    "email": "admin@gmail.com",
+    "password": "$2a$10$dKt4aPmuxwX3lVU7fxFkj.lgpchx80aoGUB.VYzsEn7qKAAIhGvHC",
+    "preferences": null,
+    "createdAt": "2026-08-01T14:55:05.392Z"
   }
 ]

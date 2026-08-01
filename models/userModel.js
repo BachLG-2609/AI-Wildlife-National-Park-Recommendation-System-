@@ -3,7 +3,6 @@ import path from "path";
 import { fileURLToPath } from "url";
 import crypto from "crypto";
 
-
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DB_PATH = path.join(__dirname, "..", "data", "db.json");
 
@@ -18,7 +17,7 @@ async function writeDB(db) {
 
 export const User = {
   /**
-   * @param {{name: string, email: string, passwordHash: string}} data
+   * @param {{name: string, email: string, passwordHash: string, role?: string}} data
    */
   async create(data) {
     const db = await readDB();
@@ -27,6 +26,7 @@ export const User = {
       name: data.name,
       email: data.email.toLowerCase(),
       passwordHash: data.passwordHash,
+      role: data.role || "user", // 👈 BỔ SUNG: Mặc định là "user", nếu có truyền vào (ví dụ 'admin') thì lấy giá trị đó
       preferences: {
         interests: [],
         season: "",
@@ -52,15 +52,16 @@ export const User = {
 
   /**
    * @param {string} id
-   * @param {object} updates - partial fields to merge (e.g. { name }, { preferences })
+   * @param {object} updates - partial fields to merge (e.g. { name }, { preferences }, { role })
    */
   async updateById(id, updates) {
     const db = await readDB();
     const idx = db.users.findIndex((u) => u.id === id);
     if (idx === -1) return null;
+    
     db.users[idx] = {
       ...db.users[idx],
-      ...updates,
+      ...updates, // 👈 Đã tự động hỗ trợ cập nhật 'role' nếu truyền vào updates
       preferences: updates.preferences
         ? { ...db.users[idx].preferences, ...updates.preferences }
         : db.users[idx].preferences,
@@ -73,5 +74,5 @@ export const User = {
 export function toPublicUser(user) {
   if (!user) return null;
   const { passwordHash, ...publicUser } = user;
-  return publicUser;
+  return publicUser; // 👈 Hàm này sẽ tự động trả về publicUser bao gồm cả field `role`
 }
