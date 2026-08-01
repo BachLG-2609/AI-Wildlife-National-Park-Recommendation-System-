@@ -10,6 +10,13 @@ const sendError = (res, error) => {
   });
 };
 
+const sendNotFound = (res) =>
+  res.status(404).json({
+    success: false,
+    message: 'Park not found',
+    data: null,
+  });
+
 const getAllParks = async (req, res) => {
   try {
     const parks = await parkModel.getAllParks();
@@ -28,6 +35,10 @@ const getParkById = async (req, res) => {
   try {
     const park = await parkModel.getParkById(req.params.id);
 
+    if (!park) {
+      return sendNotFound(res);
+    }
+
     return res.status(200).json({
       success: true,
       message: 'Park retrieved successfully',
@@ -40,6 +51,14 @@ const getParkById = async (req, res) => {
 
 const createPark = async (req, res) => {
   try {
+    if (!req.body.park_name || !req.body.country) {
+      return res.status(400).json({
+        success: false,
+        message: 'park_name and country are required',
+        data: null,
+      });
+    }
+
     const park = await parkModel.createPark(req.body);
 
     return res.status(201).json({
@@ -56,6 +75,10 @@ const updatePark = async (req, res) => {
   try {
     const park = await parkModel.updatePark(req.params.id, req.body);
 
+    if (!park) {
+      return sendNotFound(res);
+    }
+
     return res.status(200).json({
       success: true,
       message: 'Park updated successfully',
@@ -68,12 +91,16 @@ const updatePark = async (req, res) => {
 
 const deletePark = async (req, res) => {
   try {
-    const result = await parkModel.deletePark(req.params.id);
+    const deleted = await parkModel.deletePark(req.params.id);
+
+    if (!deleted) {
+      return sendNotFound(res);
+    }
 
     return res.status(200).json({
       success: true,
       message: 'Park deleted successfully',
-      data: result,
+      data: null,
     });
   } catch (error) {
     return sendError(res, error);
