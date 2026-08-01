@@ -17,7 +17,7 @@ const chatController = {
         });
       }
 
-      const session = await chatModel.createSession({ userId, title });
+      const session = await chatModel.createSession(userId, title);
       return res.status(201).json({
         success: true,
         data: session
@@ -44,7 +44,7 @@ const chatController = {
         });
       }
 
-      const sessions = await chatModel.getSessionsByUser(userId);
+      const sessions = await chatModel.getUserSessions(userId);
       return res.json({
         success: true,
         data: sessions
@@ -73,7 +73,7 @@ const chatController = {
         });
       }
 
-      const messages = await chatModel.getMessagesBySession(sessionId);
+      const messages = await chatModel.getSessionMessages(sessionId);
       return res.json({
         success: true,
         data: messages
@@ -111,14 +111,14 @@ const chatController = {
 
       // 2. Fetch existing history from DB BEFORE inserting new user message
       // (This prevents the model from seeing the current user query twice if we pass it manually)
-      const previousMessages = await chatModel.getMessagesBySession(sessionId);
+      const previousMessages = await chatModel.getSessionMessages(sessionId);
 
       // 3. Save the new user message to the DB
-      const userMessage = await chatModel.createMessage({
+      const userMessage = await chatModel.addMessage(
         sessionId,
-        sender: 'user',
+        'user',
         messageContent
-      });
+      );
 
       // 4. Map DB messages to Gemini API history format
       // Gemini expects: { role: 'user'|'model', parts: [{ text: string }] }
@@ -143,11 +143,11 @@ const chatController = {
       }
 
       // 6. Save the AI response to the DB
-      const assistantMessage = await chatModel.createMessage({
+      const assistantMessage = await chatModel.addMessage(
         sessionId,
-        sender: 'assistant',
-        messageContent: aiReplyText
-      });
+        'assistant',
+        aiReplyText
+      );
 
       return res.status(200).json({
         success: true,
