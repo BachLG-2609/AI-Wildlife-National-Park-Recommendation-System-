@@ -1,0 +1,24 @@
+[
+  {
+    "id": "1785431685694",
+    "name": "Lê Duy Hưng",
+    "email": "hung.ld.2759@aptechlearning.edu.vn",
+    "password": "$2a$10$AjuPa2VG2soCZlpAPmjpL.PgfIgBO.YSBmbyzXvljkmSaHYqyxKgC",
+    "preferences": {
+      "companion": "Gia đình",
+      "interests": [
+        "Bảo tồn chim"
+      ],
+      "activityLevel": "Thư giãn (Easy)"
+    },
+    "createdAt": "2026-07-30T17:14:45.694Z"
+  },
+  {
+    "id": "1785500846742",
+    "name": "Lê Hưng",
+    "email": "leduyhunght2007@gmail.com",
+    "password": "$2a$10$oVzK74eU/5c20lY1Y.bFVO.GAx/.srlL5ty3A35eScrMoIk4Z6d9y",
+    "preferences": null,
+    "createdAt": "2026-07-31T12:27:26.742Z"
+  }
+]
