@@ -1,12 +1,14 @@
 {
   "name": "ai-wildlife-national-park-recommendation-system-",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
   "main": "app.js",
   "directories": {
     "test": "tests"
   },
   "scripts": {
+    "dev": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
@@ -17,14 +19,16 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/BachLG-2609/AI-Wildlife-National-Park-Recommendation-System-/issues"
   },
   "homepage": "https://github.com/BachLG-2609/AI-Wildlife-National-Park-Recommendation-System-#readme",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
     "mysql2": "^3.23.2"
   }
 }
