@@ -229,163 +229,31 @@ app.get("/api/animal-images/:animalId", (req, res) => {
   });
 });
 
-// CREATE ANIMAL IMAGE
-app.post("/api/animal-images", (req, res) => {
-  createAnimalImage(req.body, (error, result) => {
-    if (error) {
-      return res.status(400).json({
-        message: error.message,
-      });
-    }
-    res.status(201).json({
-      message: "Animal image created successfully",
-      image_id: result.insertId,
-    });
-  });
-});
-
-// DELETE ANIMAL IMAGE
-app.delete("/api/animal-images/:id", (req, res) => {
-  const id = req.params.id;
-  deleteAnimalImage(id, (error, result) => {
-    if (error) {
-      return res.status(500).json({
-        message: error.message,
-      });
-    }
-    if (result.affectedRows === 0) {
-      return res.status(404).json({
-        message: "Animal image not found",
-      });
-    }
-    res.json({
-      message: "Animal image deleted successfully",
-    });
-  });
-});
-
-// =======================
-// ANIMAL RECOGNITION API
-// =======================
-
-import {
-  getRecognitionsByUser,
-  createRecognition,
-  updateRecognition,
-} from "./models/animalRecognitionModel.js";
-
-// GET RECOGNITION HISTORY BY USER
-app.get("/api/animal-recognitions/user/:userId", (req, res) => {
-  const userId = req.params.userId;
-  getRecognitionsByUser(userId, (error, result) => {
-    if (error) {
-      return res.status(500).json({
-        message: error.message,
-      });
-    }
-    res.json(result);
-  });
-});
-
-// CREATE NEW RECOGNITION
-app.post("/api/animal-recognitions", (req, res) => {
-  createRecognition(req.body, (error, result) => {
-    if (error) {
-      return res.status(400).json({
-        message: error.message,
-      });
-    }
-    res.status(201).json({
-      message: "Recognition created successfully",
-    });
-  });
-});
-
-// UPDATE RECOGNITION RESULT
-app.put("/api/animal-recognitions/:id", (req, res) => {
-  const id = req.params.id;
-  updateRecognition(id, req.body, (error, result) => {
-    if (error) {
-      return res.status(400).json({
-        message: error.message,
-      });
-    }
-    if (result.affectedRows === 0) {
-      return res.status(404).json({
-        message: "Recognition not found",
-      });
-    }
-    res.json({
-      message: "Recognition updated successfully",
-    });
-  });
-});
-
-// =======================
-// RECOGNITION RESULT API
-// =======================
-
-import {
-  getResultsByRecognition,
-  createRecognitionResult,
-  deleteRecognitionResult,
-} from "./models/recognitionResultModel.js";
-
-// GET ALL AI RESULTS BY RECOGNITION ID
-app.get("/api/recognition-results/:recognitionId", (req, res) => {
-  const recognitionId = req.params.recognitionId;
-  getResultsByRecognition(recognitionId, (error, result) => {
-    if (error) {
-      return res.status(500).json({
-        message: error.message,
-      });
-    }
-    res.json(result);
-  });
-});
-
-// CREATE AI RESULT
-app.post("/api/recognition-results", (req, res) => {
+app.post("/api/recognition-results", authenticateToken, (req, res, next) => {
   createRecognitionResult(req.body, (error, result) => {
-    if (error) {
-      return res.status(400).json({
-        message: error.message,
-      });
-    }
-    res.status(201).json({
-      message: "Recognition result created successfully",
-    });
+    if (error) return res.status(400).json({ message: error.message });
+    res.status(201).json({ message: "Recognition result created successfully" });
   });
 });
 
-// DELETE AI RESULT
-app.delete("/api/recognition-results/:id", (req, res) => {
-  const id = req.params.id;
-  deleteRecognitionResult(id, (error, result) => {
-    if (error) {
-      return res.status(500).json({
-        message: error.message,
-      });
-    }
-    if (result.affectedRows === 0) {
-      return res.status(404).json({
-        message: "Recognition result not found",
-      });
-    }
-    res.json({
-      message: "Recognition result deleted successfully",
-    });
+app.delete("/api/recognition-results/:id", authenticateToken, (req, res, next) => {
+  deleteRecognitionResult(req.params.id, (error, result) => {
+    if (error) return next(error);
+    if (result.affectedRows === 0) return res.status(404).json({ message: "Recognition result not found" });
+    res.json({ message: "Recognition result deleted successfully" });
   });
 });
 
-// =======================
-// SERVER START
-// =======================
+// ==========================================
+// 4. GLOBAL ERROR HANDLER & SERVER START
+// ==========================================
 
-const PORT = process.env.PORT || 3000;
+app.use((err, req, res, next) => {
+  console.error("❌ Error Logs:", err);
+  res.status(500).json({ message: err.message || "Internal Server Error" });
+});
 
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
-  console.log("All routes loaded");
-  console.log(`Server running on port ${PORT}`);
-  console.log(`http://localhost:${PORT}`);
+  console.log(`🚀 WildSense API Server is running on http://localhost:${PORT}`);
 });
