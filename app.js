@@ -4,11 +4,16 @@ require('dotenv').config();
 
 const chatRoutes = require('./routes/chatRoutes');
 
+const parkRoutes = require('./routes/parkRoutes');
+
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+
+app.use('/api/parks', parkRoutes);
 
 // Mock Auth Middleware
 // Once Part I (Auth & User Module) is complete, replace this with the real authMiddleware.
